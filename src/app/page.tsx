@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version has full database integration and AI daily summaries.
+// This version includes a fix for the production build.
 
 import React, { useState, useEffect, useRef } from 'react';
 
