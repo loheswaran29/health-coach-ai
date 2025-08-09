@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes a TypeScript fix for the production build.
+// This version includes the final TypeScript fix for the production build.
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -63,7 +63,7 @@ const Button = ({ children, onClick, className = '', variant = 'primary', type =
     };
     return (<button onClick={onClick} type={type} className={`${baseClasses} ${variants[variant]} ${className}`} disabled={disabled}>{children}</button>);
 };
-const Input = ({ id, type = 'text', label, placeholder, value, onChange, required = true, disabled = false }: { id: string, type?: string, label: string, placeholder: string, value: string | number, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean, disabled?: boolean }) => (
+const Input = ({ id, type = 'text', label, placeholder = '', value, onChange, required = true, disabled = false }: { id: string, type?: string, label: string, placeholder?: string, value: string | number, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean, disabled?: boolean }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
         <input type={type} id={id} name={id} className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 disabled:opacity-70" placeholder={placeholder} value={value} onChange={onChange} required={required} disabled={disabled} />
