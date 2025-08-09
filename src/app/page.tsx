@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes a fix for the production build.
+// This version includes a TypeScript fix for the production build.
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -42,20 +42,20 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// --- ICONS (No changes here) ---
-const MoonIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>);
-const DumbbellIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2-4 4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>);
-const UtensilsIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/></svg>);
-const CameraIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>);
-const UserIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);
-const LogOutIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>);
-const ChevronLeftIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>);
-const SparklesIcon = ({ className }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.96 9.96 12 3l2.04 6.96L21 12l-6.96 2.04L12 21l-2.04-6.96L3 12l6.96-2.04Z"/><path d="M3 3h.01"/><path d="M21 21h.01"/><path d="M21 3h.01"/><path d="M3 21h.01"/></svg>);
+// --- ICONS (TypeScript types added) ---
+const MoonIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>);
+const DumbbellIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2-4 4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>);
+const UtensilsIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/></svg>);
+const CameraIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>);
+const UserIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>);
+const LogOutIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>);
+const ChevronLeftIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>);
+const SparklesIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.96 9.96 12 3l2.04 6.96L21 12l-6.96 2.04L12 21l-2.04-6.96L3 12l6.96-2.04Z"/><path d="M3 3h.01"/><path d="M21 21h.01"/><path d="M21 3h.01"/><path d="M3 21h.01"/></svg>);
 
 
 // --- Reusable Components ---
-const Card = ({ children, className = '' }) => (<div className={`bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-6 backdrop-blur-sm ${className}`}>{children}</div>);
-const Button = ({ children, onClick, className = '', variant = 'primary', type = 'button', disabled = false }) => {
+const Card = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => (<div className={`bg-white dark:bg-gray-800/50 rounded-2xl shadow-lg p-6 backdrop-blur-sm ${className}`}>{children}</div>);
+const Button = ({ children, onClick, className = '', variant = 'primary', type = 'button', disabled = false }: { children: React.ReactNode, onClick?: () => void, className?: string, variant?: 'primary' | 'secondary', type?: 'button' | 'submit', disabled?: boolean }) => {
     const baseClasses = 'w-full font-bold py-3 px-4 rounded-xl transition-transform transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed';
     const variants = {
         primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
@@ -63,13 +63,13 @@ const Button = ({ children, onClick, className = '', variant = 'primary', type =
     };
     return (<button onClick={onClick} type={type} className={`${baseClasses} ${variants[variant]} ${className}`} disabled={disabled}>{children}</button>);
 };
-const Input = ({ id, type = 'text', label, placeholder, value, onChange, required = true, disabled = false }) => (
+const Input = ({ id, type = 'text', label, placeholder, value, onChange, required = true, disabled = false }: { id: string, type?: string, label: string, placeholder: string, value: string | number, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, required?: boolean, disabled?: boolean }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
         <input type={type} id={id} name={id} className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100 disabled:opacity-70" placeholder={placeholder} value={value} onChange={onChange} required={required} disabled={disabled} />
     </div>
 );
-const Select = ({ id, label, value, onChange, children }) => (
+const Select = ({ id, label, value, onChange, children }: { id: string, label: string, value: string, onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void, children: React.ReactNode }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
         <select id={id} name={id} value={value} onChange={onChange} className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100">
@@ -77,16 +77,16 @@ const Select = ({ id, label, value, onChange, children }) => (
         </select>
     </div>
 );
-const Textarea = ({ id, label, placeholder, value, onChange }) => (
+const Textarea = ({ id, label, placeholder, value, onChange }: { id: string, label: string, placeholder: string, value: string, onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void }) => (
     <div>
         <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-        <textarea id={id} name={id} rows="3" className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100" placeholder={placeholder} value={value} onChange={onChange}></textarea>
+        <textarea id={id} name={id} rows={3} className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-gray-100" placeholder={placeholder} value={value} onChange={onChange}></textarea>
     </div>
 );
 
 // --- Page Components ---
 
-const Header = ({ onNavigate }) => {
+const Header = ({ onNavigate }: { onNavigate: (page: string) => void }) => {
     const handleLogout = async () => {
         try {
             await signOut(auth);
@@ -105,7 +105,7 @@ const Header = ({ onNavigate }) => {
     );
 };
 
-const Dashboard = ({ onNavigate, user, userData }) => {
+const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) => void, user: any, userData: any }) => {
     const name = userData?.name || 'User';
     const greeting = `Hello, ${name}!`;
     
@@ -203,7 +203,7 @@ const AuthPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -221,7 +221,7 @@ const AuthPage = () => {
                     primaryGoal: 'Improve Longevity',
                 });
             }
-        } catch (err) {
+        } catch (err: any) {
             setError(err.message);
         } finally {
             setLoading(false);
@@ -242,7 +242,7 @@ const AuthPage = () => {
                         <Button type="submit" disabled={loading}>{loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}</Button>
                     </form>
                     <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-                        {isLogin ? "Don&apos;t have an account?" : "Already have an account?"}
+                        {isLogin ? "Don't have an account?" : "Already have an account?"}
                         <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="font-semibold text-blue-600 hover:text-blue-500 ml-1">{isLogin ? 'Sign Up' : 'Sign In'}</button>
                     </p>
                 </Card>
@@ -251,7 +251,7 @@ const AuthPage = () => {
     );
 };
 
-const ProfilePage = ({ onNavigate, user, userData, refreshData }) => {
+const ProfilePage = ({ onNavigate, user, userData, refreshData }: { onNavigate: (page: string) => void, user: any, userData: any, refreshData: () => void }) => {
     const [name, setName] = useState(userData?.name || '');
     const [goal, setGoal] = useState(userData?.primaryGoal || 'Improve Longevity');
     const [weight, setWeight] = useState(userData?.weight || '');
@@ -259,7 +259,7 @@ const ProfilePage = ({ onNavigate, user, userData, refreshData }) => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
 
-    const handleSave = async (e) => {
+    const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setMessage('');
@@ -308,15 +308,15 @@ const ProfilePage = ({ onNavigate, user, userData, refreshData }) => {
     );
 };
 
-const LogMealPage = ({ onNavigate, user }) => {
+const LogMealPage = ({ onNavigate, user }: { onNavigate: (page: string) => void, user: any }) => {
     const [description, setDescription] = useState('');
     const [calories, setCalories] = useState('');
     const [manualSaveLoading, setManualSaveLoading] = useState(false);
     const [aiLoading, setAiLoading] = useState(false);
     const [error, setError] = useState('');
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleManualSave = async (e) => {
+    const handleManualSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setManualSaveLoading(true);
         try {
@@ -339,7 +339,7 @@ const LogMealPage = ({ onNavigate, user }) => {
         fileInputRef.current?.click();
     };
 
-    const handleFileChange = async (event) => {
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
 
@@ -407,13 +407,13 @@ const LogMealPage = ({ onNavigate, user }) => {
     );
 };
 
-const LogWorkoutPage = ({ onNavigate, user }) => {
+const LogWorkoutPage = ({ onNavigate, user }: { onNavigate: (page: string) => void, user: any }) => {
     const [type, setType] = useState('');
     const [duration, setDuration] = useState('');
     const [notes, setNotes] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleSave = async (e) => {
+    const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -447,13 +447,13 @@ const LogWorkoutPage = ({ onNavigate, user }) => {
     );
 };
 
-const LogSleepPage = ({ onNavigate, user }) => {
+const LogSleepPage = ({ onNavigate, user }: { onNavigate: (page: string) => void, user: any }) => {
     const [bedTime, setBedTime] = useState('22:30');
     const [wakeTime, setWakeTime] = useState('06:30');
     const [quality, setQuality] = useState('Good');
     const [loading, setLoading] = useState(false);
 
-    const handleSave = async (e) => {
+    const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         try {
@@ -492,12 +492,12 @@ const LogSleepPage = ({ onNavigate, user }) => {
 
 // --- Main App Component ---
 export default function App() {
-    const [user, setUser] = useState(null);
-    const [userData, setUserData] = useState(null);
+    const [user, setUser] = useState<any>(null);
+    const [userData, setUserData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState('dashboard');
 
-    const fetchUserData = async (currentUser) => {
+    const fetchUserData = async (currentUser: any) => {
         if (!currentUser) return;
         const userDocRef = doc(db, "users", currentUser.uid);
         const userDocSnap = await getDoc(userDocRef);
@@ -520,7 +520,7 @@ export default function App() {
         return () => unsubscribe();
     }, []);
 
-    const handleNavigation = (page) => {
+    const handleNavigation = (page: string) => {
         setCurrentPage(page);
     };
 
