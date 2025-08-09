@@ -242,8 +242,7 @@ const AuthPage = () => {
                         <Button type="submit" disabled={loading}>{loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}</Button>
                     </form>
                     <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-                        {isLogin ? 'New to Health AI?' : 'Already have an account?'}
-                        {' '}
+                        {isLogin ? "Don&apos;t have an account?" : "Already have an account?"}
                         <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="font-semibold text-blue-600 hover:text-blue-500 ml-1">{isLogin ? 'Sign Up' : 'Sign In'}</button>
                     </p>
                 </Card>
