@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes full AI plan generation.
+// This version includes the new Weekly Progress Report feature.
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -51,6 +51,7 @@ const UserIcon = ({ className }: { className: string }) => (<svg className={clas
 const LogOutIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>);
 const ChevronLeftIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>);
 const SparklesIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.96 9.96 12 3l2.04 6.96L21 12l-6.96 2.04L12 21l-2.04-6.96L3 12l6.96-2.04Z"/><path d="M3 3h.01"/><path d="M21 21h.01"/><path d="M21 3h.01"/><path d="M3 21h.01"/></svg>);
+const CalendarIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>);
 
 
 // --- Reusable Components ---
@@ -126,7 +127,6 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
         setIsGenerating(true);
         setAiSummary("Generating your personalized plan...");
         try {
-            // We now call the new generate-plan endpoint
             const response = await fetch('/api/generate-plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -149,7 +149,6 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
         }
     };
 
-    // Static data for metrics card, as this would typically come from aggregated logs
     const metrics = [
         { id: 1, name: 'Sleep', value: '7h 45m', goal: '8h', icon: MoonIcon, color: 'text-blue-500' },
         { id: 2, name: 'Workout', value: '3/5 days', goal: '5 days', icon: DumbbellIcon, color: 'text-orange-500' },
@@ -196,11 +195,12 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
                 </Card>
             </div>
             <Card>
-                <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Log Your Day</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <h3 className="font-semibold text-lg mb-4 text-gray-900 dark:text-white">Log & Review</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <Button onClick={() => onNavigate('logMeal')} variant="secondary"><UtensilsIcon className="w-6 h-6 mx-auto mb-2" /> Log Meal</Button>
                     <Button onClick={() => onNavigate('logWorkout')} variant="secondary"><DumbbellIcon className="w-6 h-6 mx-auto mb-2" /> Log Workout</Button>
                     <Button onClick={() => onNavigate('logSleep')} variant="secondary"><MoonIcon className="w-6 h-6 mx-auto mb-2" /> Log Sleep</Button>
+                    <Button onClick={() => onNavigate('weekly-report')} variant="secondary"><CalendarIcon className="w-6 h-6 mx-auto mb-2" /> View Weekly Report</Button>
                 </div>
             </Card>
         </div>
@@ -284,7 +284,7 @@ const ProfilePage = ({ onNavigate, user, userData, refreshData }: { onNavigate: 
                 height: Number(height)
             });
             setMessage('Profile saved successfully!');
-            await refreshData(); // Refresh data in the main app component
+            await refreshData();
             setTimeout(() => setMessage(''), 3000);
         } catch (err) {
             setMessage('Error saving profile.');
@@ -501,6 +501,80 @@ const LogSleepPage = ({ onNavigate, user }: { onNavigate: (page: string) => void
     );
 };
 
+const WeeklyReportPage = ({ onNavigate, user, userData }: { onNavigate: (page: string) => void, user: any, userData: any }) => {
+    const [report, setReport] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleGenerateReport = async () => {
+        setIsLoading(true);
+        setError('');
+        setReport(null);
+        try {
+            const response = await fetch('/api/generate-weekly-report', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.uid, userProfile: userData }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setReport(data);
+            } else {
+                throw new Error(data.error || 'Failed to generate report.');
+            }
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="p-4 md:p-6">
+            <div className="flex items-center mb-6">
+                <button onClick={() => onNavigate('dashboard')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 mr-2"><ChevronLeftIcon className="w-6 h-6 text-gray-900 dark:text-white" /></button>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Weekly Report</h2>
+            </div>
+            
+            {!report && (
+                <Card className="text-center">
+                    <p className="mb-4 text-gray-700 dark:text-gray-300">Generate your personalized weekly progress report to see trends, highlights, and suggestions from your AI coach.</p>
+                    <Button onClick={handleGenerateReport} disabled={isLoading} className="max-w-xs mx-auto">
+                        {isLoading ? 'Analyzing Your Week...' : 'Generate Report'}
+                    </Button>
+                    {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
+                </Card>
+            )}
+
+            {report && (
+                 <div className="space-y-6">
+                    <Card>
+                        <h3 className="text-xl font-semibold mb-3 text-green-500">Highlights</h3>
+                        <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                            {report.highlights.map((item: string, index: number) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </Card>
+                     <Card>
+                        <h3 className="text-xl font-semibold mb-3 text-blue-500">Trends</h3>
+                        <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                            {report.trends.map((item: string, index: number) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </Card>
+                     <Card>
+                        <h3 className="text-xl font-semibold mb-3 text-purple-500">Suggestions for Next Week</h3>
+                        <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                            {report.suggestions.map((item: string, index: number) => <li key={index}>{item}</li>)}
+                        </ul>
+                    </Card>
+                    <Button onClick={handleGenerateReport} disabled={isLoading} variant="secondary">
+                        {isLoading ? 'Re-analyzing...' : 'Generate Again'}
+                    </Button>
+                 </div>
+            )}
+        </div>
+    );
+};
+
 
 // --- Main App Component ---
 export default function App() {
@@ -548,6 +622,8 @@ export default function App() {
                 return <LogWorkoutPage onNavigate={handleNavigation} user={user} />;
             case 'logSleep':
                 return <LogSleepPage onNavigate={handleNavigation} user={user} />;
+            case 'weekly-report':
+                return <WeeklyReportPage onNavigate={handleNavigation} user={user} userData={userData} />;
             default:
                 return <Dashboard onNavigate={handleNavigation} user={user} userData={userData}/>;
         }
