@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes the final TypeScript fix for the production build.
+// This version includes full AI plan generation.
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -109,48 +109,60 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
     const name = userData?.name || 'User';
     const greeting = `Hello, ${name}!`;
     
-    const [aiSummary, setAiSummary] = useState(`Click "Generate Daily Summary" to get your personalized insights for today!`);
+    // State for all AI-generated content
+    const [aiSummary, setAiSummary] = useState(`Click "Generate Daily Plan" to get your personalized insights and plans for today!`);
+    const [mealPlan, setMealPlan] = useState({
+        breakfast: "...",
+        lunch: "...",
+        dinner: "..."
+    });
+    const [workoutPlan, setWorkoutPlan] = useState({
+        title: "...",
+        exercises: ["..."]
+    });
     const [isGenerating, setIsGenerating] = useState(false);
 
-    const handleGenerateSummary = async () => {
+    const handleGeneratePlan = async () => {
         setIsGenerating(true);
+        setAiSummary("Generating your personalized plan...");
         try {
-            const response = await fetch('/api/generate-summary', {
+            // We now call the new generate-plan endpoint
+            const response = await fetch('/api/generate-plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.uid, userProfile: userData }),
             });
             const data = await response.json();
-            if (data.summary) {
+            
+            if (data.summary && data.mealPlan && data.workoutPlan) {
                 setAiSummary(data.summary);
+                setMealPlan(data.mealPlan);
+                setWorkoutPlan(data.workoutPlan);
             } else {
-                setAiSummary("Could not generate a summary at this time. Please try again later.");
+                setAiSummary("Could not generate a full plan at this time. Please try again later.");
             }
         } catch (error) {
             console.error(error);
-            setAiSummary("An error occurred while generating your summary.");
+            setAiSummary("An error occurred while generating your plan.");
         } finally {
             setIsGenerating(false);
         }
     };
 
-    const mockPlanData = {
-        metrics: [
-            { id: 1, name: 'Sleep', value: '7h 45m', goal: '8h', icon: MoonIcon, color: 'text-blue-500' },
-            { id: 2, name: 'Workout', value: '3/5 days', goal: '5 days', icon: DumbbellIcon, color: 'text-orange-500' },
-            { id: 3, name: 'Calories', value: '1,800', goal: '2,200', icon: UtensilsIcon, color: 'text-green-500' },
-        ],
-        mealPlan: { breakfast: "Protein smoothie with spinach and berries.", lunch: "Grilled chicken salad with mixed greens and vinaigrette.", dinner: "Salmon with quinoa and roasted asparagus." },
-        workoutPlan: { title: "Full Body Strength (Day 3)", exercises: ["Squats: 3 sets of 10-12 reps", "Push-ups: 3 sets to failure", "Bent-over Rows: 3 sets of 10-12 reps", "Plank: 3 sets, 60-second hold"] }
-    };
+    // Static data for metrics card, as this would typically come from aggregated logs
+    const metrics = [
+        { id: 1, name: 'Sleep', value: '7h 45m', goal: '8h', icon: MoonIcon, color: 'text-blue-500' },
+        { id: 2, name: 'Workout', value: '3/5 days', goal: '5 days', icon: DumbbellIcon, color: 'text-orange-500' },
+        { id: 3, name: 'Calories', value: '1,800', goal: '2,200', icon: UtensilsIcon, color: 'text-green-500' },
+    ];
 
     return (
         <div className="space-y-6 p-4 md:p-6">
             <div className="flex justify-between items-start">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{greeting}</h2>
-                <Button onClick={handleGenerateSummary} disabled={isGenerating} className="w-auto !py-2 flex items-center space-x-2">
+                <Button onClick={handleGeneratePlan} disabled={isGenerating} className="w-auto !py-2 flex items-center space-x-2">
                     <SparklesIcon className="w-5 h-5" />
-                    <span>{isGenerating ? "Generating..." : "Generate Daily Summary"}</span>
+                    <span>{isGenerating ? "Generating..." : "Generate Daily Plan"}</span>
                 </Button>
             </div>
             <Card className="bg-blue-500/10 dark:bg-blue-900/30 border border-blue-500/20">
@@ -158,7 +170,7 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
                 <p className="text-gray-700 dark:text-gray-300 min-h-[6rem]">{aiSummary}</p>
             </Card>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {mockPlanData.metrics.map(metric => (
+                {metrics.map(metric => (
                     <Card key={metric.id} className="text-center">
                         <metric.icon className={`w-8 h-8 mx-auto mb-2 ${metric.color}`} />
                         <p className="text-xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
@@ -171,15 +183,15 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
                 <Card>
                     <h3 className="font-semibold text-lg mb-3 text-gray-900 dark:text-white">Today's Meal Plan</h3>
                     <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                        <li><strong>Breakfast:</strong> {mockPlanData.mealPlan.breakfast}</li>
-                        <li><strong>Lunch:</strong> {mockPlanData.mealPlan.lunch}</li>
-                        <li><strong>Dinner:</strong> {mockPlanData.mealPlan.dinner}</li>
+                        <li><strong>Breakfast:</strong> {mealPlan.breakfast}</li>
+                        <li><strong>Lunch:</strong> {mealPlan.lunch}</li>
+                        <li><strong>Dinner:</strong> {mealPlan.dinner}</li>
                     </ul>
                 </Card>
                 <Card>
-                    <h3 className="font-semibold text-lg mb-3 text-gray-900 dark:text-white">{mockPlanData.workoutPlan.title}</h3>
+                    <h3 className="font-semibold text-lg mb-3 text-gray-900 dark:text-white">{workoutPlan.title}</h3>
                     <ul className="space-y-2 text-gray-700 dark:text-gray-300">
-                        {mockPlanData.workoutPlan.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
+                        {workoutPlan.exercises.map((ex, i) => <li key={i}>{ex}</li>)}
                     </ul>
                 </Card>
             </div>
@@ -242,7 +254,7 @@ const AuthPage = () => {
                         <Button type="submit" disabled={loading}>{loading ? 'Loading...' : (isLogin ? 'Sign In' : 'Sign Up')}</Button>
                     </form>
                     <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
-                        {isLogin ? "Don't have an account?" : "Already have an account?"}
+                        {isLogin ? "Don&apos;t have an account?" : "Already have an account?"}
                         <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="font-semibold text-blue-600 hover:text-blue-500 ml-1">{isLogin ? 'Sign Up' : 'Sign In'}</button>
                     </p>
                 </Card>
