@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes the new Weekly Progress Report feature.
+// This version includes a dynamic dashboard with live metrics.
 
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -112,16 +112,38 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
     
     // State for all AI-generated content
     const [aiSummary, setAiSummary] = useState(`Click "Generate Daily Plan" to get your personalized insights and plans for today!`);
-    const [mealPlan, setMealPlan] = useState({
-        breakfast: "...",
-        lunch: "...",
-        dinner: "..."
-    });
-    const [workoutPlan, setWorkoutPlan] = useState({
-        title: "...",
-        exercises: ["..."]
-    });
+    const [mealPlan, setMealPlan] = useState({ breakfast: "...", lunch: "...", dinner: "..." });
+    const [workoutPlan, setWorkoutPlan] = useState({ title: "...", exercises: ["..."] });
     const [isGenerating, setIsGenerating] = useState(false);
+    
+    // State for dynamic metrics
+    const [metrics, setMetrics] = useState({
+        sleep: { value: '...', goal: '8.0h' },
+        workout: { value: '...', goal: '5 days' },
+        calories: { value: '...', goal: '2,200' },
+    });
+
+    // Fetch dashboard metrics on load
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            if (user?.uid) {
+                try {
+                    const response = await fetch('/api/get-dashboard-metrics', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: user.uid }),
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        setMetrics(data);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch metrics:", error);
+                }
+            }
+        };
+        fetchMetrics();
+    }, [user]);
 
     const handleGeneratePlan = async () => {
         setIsGenerating(true);
@@ -149,10 +171,10 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
         }
     };
 
-    const metrics = [
-        { id: 1, name: 'Sleep', value: '7h 45m', goal: '8h', icon: MoonIcon, color: 'text-blue-500' },
-        { id: 2, name: 'Workout', value: '3/5 days', goal: '5 days', icon: DumbbellIcon, color: 'text-orange-500' },
-        { id: 3, name: 'Calories', value: '1,800', goal: '2,200', icon: UtensilsIcon, color: 'text-green-500' },
+    const metricCards = [
+        { id: 1, name: 'Avg Sleep', data: metrics.sleep, icon: MoonIcon, color: 'text-blue-500' },
+        { id: 2, name: 'Workouts', data: metrics.workout, icon: DumbbellIcon, color: 'text-orange-500' },
+        { id: 3, name: 'Avg Calories', data: metrics.calories, icon: UtensilsIcon, color: 'text-green-500' },
     ];
 
     return (
@@ -169,12 +191,12 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
                 <p className="text-gray-700 dark:text-gray-300 min-h-[6rem]">{aiSummary}</p>
             </Card>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {metrics.map(metric => (
+                {metricCards.map(metric => (
                     <Card key={metric.id} className="text-center">
                         <metric.icon className={`w-8 h-8 mx-auto mb-2 ${metric.color}`} />
-                        <p className="text-xl font-bold text-gray-900 dark:text-white">{metric.value}</p>
+                        <p className="text-xl font-bold text-gray-900 dark:text-white">{metric.data.value}</p>
                         <p className="text-sm text-gray-500 dark:text-gray-400">{metric.name}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">Goal: {metric.goal}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">Goal: {metric.data.goal}</p>
                     </Card>
                 ))}
             </div>
