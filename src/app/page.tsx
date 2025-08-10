@@ -1,11 +1,14 @@
 "use client";
 
 // Welcome to your AI Health Coach App!
-// This version includes a dynamic dashboard with live metrics.
+// This version adds data visualization to the weekly report.
 
 import React, { useState, useEffect, useRef } from 'react';
+// Import the charting library
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-// STEP 1: Import Firebase services
+
+// Import Firebase services
 import { initializeApp } from 'firebase/app';
 import { 
     getAuth, 
@@ -26,7 +29,7 @@ import {
 } from 'firebase/firestore';
 
 
-// STEP 2: Your Firebase configuration is now active.
+// Your Firebase configuration is now active.
 const firebaseConfig = {
   apiKey: "AIzaSyDiS6w3KDX8RMK7NUBqagyEv66Wd8pZsJk",
   authDomain: "health-coach-ai-app.firebaseapp.com",
@@ -36,13 +39,13 @@ const firebaseConfig = {
   appId: "1:39441588402:web:32a2e60b170f16850929ab"
 };
 
-// STEP 3: Initialize Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 
-// --- ICONS (TypeScript types added) ---
+// --- ICONS ---
 const MoonIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>);
 const DumbbellIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2-4 4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>);
 const UtensilsIcon = ({ className }: { className: string }) => (<svg className={className} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z"/></svg>);
@@ -110,20 +113,17 @@ const Dashboard = ({ onNavigate, user, userData }: { onNavigate: (page: string) 
     const name = userData?.name || 'User';
     const greeting = `Hello, ${name}!`;
     
-    // State for all AI-generated content
     const [aiSummary, setAiSummary] = useState(`Click "Generate Daily Plan" to get your personalized insights and plans for today!`);
     const [mealPlan, setMealPlan] = useState({ breakfast: "...", lunch: "...", dinner: "..." });
     const [workoutPlan, setWorkoutPlan] = useState({ title: "...", exercises: ["..."] });
     const [isGenerating, setIsGenerating] = useState(false);
     
-    // State for dynamic metrics
     const [metrics, setMetrics] = useState({
         sleep: { value: '...', goal: '8.0h' },
         workout: { value: '...', goal: '5 days' },
         calories: { value: '...', goal: '2,200' },
     });
 
-    // Fetch dashboard metrics on load
     useEffect(() => {
         const fetchMetrics = async () => {
             if (user?.uid) {
@@ -570,6 +570,21 @@ const WeeklyReportPage = ({ onNavigate, user, userData }: { onNavigate: (page: s
 
             {report && (
                  <div className="space-y-6">
+                    {report.chartData && report.chartData.length > 0 && (
+                        <Card>
+                            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Weekly Sleep Duration (Hours)</h3>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart data={report.chartData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="sleep" fill="#8884d8" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </Card>
+                    )}
                     <Card>
                         <h3 className="text-xl font-semibold mb-3 text-green-500">Highlights</h3>
                         <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">

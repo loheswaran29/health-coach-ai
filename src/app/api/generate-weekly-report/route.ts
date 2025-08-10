@@ -9,6 +9,21 @@ import { Timestamp } from 'firebase-admin/firestore';
 const adminDb = initAdmin();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
+// Helper function to calculate sleep duration in hours
+const calculateSleepDuration = (bedTime: string, wakeTime: string): number => {
+    const [bedHour, bedMinute] = bedTime.split(':').map(Number);
+    const [wakeHour, wakeMinute] = wakeTime.split(':').map(Number);
+    let bedDate = new Date();
+    bedDate.setHours(bedHour, bedMinute, 0, 0);
+    let wakeDate = new Date();
+    wakeDate.setHours(wakeHour, wakeMinute, 0, 0);
+    if (wakeDate < bedDate) {
+        wakeDate.setDate(wakeDate.getDate() + 1);
+    }
+    const durationMillis = wakeDate.getTime() - bedDate.getTime();
+    return parseFloat((durationMillis / (1000 * 60 * 60)).toFixed(1));
+};
+
 export async function POST(req: Request) {
   try {
     const { userId, userProfile } = await req.json();
@@ -17,13 +32,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User information is missing." }, { status: 400 });
     }
 
-    // Calculate the date 7 days ago
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     const oneWeekAgoTimestamp = Timestamp.fromDate(oneWeekAgo);
 
-    // Fetch data from the last 7 days
-    const sleepQuery = adminDb.collection(`users/${userId}/sleep`).where('loggedAt', '>=', oneWeekAgoTimestamp);
+    const sleepQuery = adminDb.collection(`users/${userId}/sleep`).where('loggedAt', '>=', oneWeekAgoTimestamp).orderBy('loggedAt', 'asc');
     const workoutQuery = adminDb.collection(`users/${userId}/workouts`).where('loggedAt', '>=', oneWeekAgoTimestamp);
     const mealQuery = adminDb.collection(`users/${userId}/meals`).where('loggedAt', '>=', oneWeekAgoTimestamp);
 
@@ -37,7 +50,18 @@ export async function POST(req: Request) {
     const weeklyWorkouts = workoutSnapshot.docs.map(doc => doc.data());
     const weeklyMeals = mealSnapshot.docs.map(doc => doc.data());
 
-    // Construct the detailed prompt for the AI
+    // --- Prepare Data for Chart ---
+    const chartData = sleepSnapshot.docs.map(doc => {
+        const data = doc.data();
+        const date = data.loggedAt.toDate();
+        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+        return {
+            name: day,
+            sleep: calculateSleepDuration(data.bedTime, data.wakeTime),
+        };
+    });
+
+    // --- AI Prompt ---
     const prompt = `
       Act as an expert holistic health and longevity coach named 'Health AI'.
       Your tone should be encouraging, insightful, and data-driven.
@@ -72,11 +96,11 @@ export async function POST(req: Request) {
     const response = result.response;
     const text = response.text();
     
-    // Clean the response text to ensure it's valid JSON
     const jsonText = text.replace(/```json\n|```/g, '').trim();
     const report = JSON.parse(jsonText);
 
-    return NextResponse.json(report);
+    // Combine AI report with chart data
+    return NextResponse.json({ ...report, chartData });
 
   } catch (error) {
     console.error("Error in weekly report generation API route:", error);
