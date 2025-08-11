@@ -1,6 +1,6 @@
 "use client";
 
-// Welcome to your AI Health Coach App!
+// Welcome to your The ZenZ Ai App!
 // This version adds data visualization to the weekly report.
 
 import React, { useState, useEffect, useRef } from 'react';
@@ -100,7 +100,7 @@ const Header = ({ onNavigate }: { onNavigate: (page: string) => void }) => {
     };
     return (
         <header className="flex justify-between items-center p-4 text-gray-900 dark:text-white">
-            <h1 className="text-2xl font-bold">Health AI</h1>
+            <h1 className="text-2xl font-bold">The ZenZ Ai</h1>
             <div className="flex items-center space-x-4">
                 <button onClick={() => onNavigate('profile')} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><UserIcon className="w-6 h-6" /></button>
                 <button onClick={handleLogout} className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700"><LogOutIcon className="w-6 h-6" /></button>
