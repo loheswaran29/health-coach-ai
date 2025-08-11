@@ -38,12 +38,15 @@ export async function POST(req: Request) {
       Analyze the food items in this image. 
       Provide a nutritional estimation.
       Identify the meal and list the primary ingredients.
-      Estimate the total calories.
+      Estimate the total calories, protein, carbs, and fats.
 
       Return the response as a JSON object with the following structure:
       {
         "description": "A short description of the meal, e.g., 'Grilled chicken with roasted vegetables'",
-        "calories": "A numerical value for the estimated calories, e.g., 450"
+        "calories": "A numerical value for the estimated calories, e.g., 450",
+        "protein": "A numerical value for the estimated protein in grams, e.g., 35",
+        "carbs": "A numerical value for the estimated carbs in grams, e.g., 20",
+        "fats": "A numerical value for the estimated fats in grams, e.g., 15"
       }
       If you cannot determine the meal, return a JSON object with an error message:
       {

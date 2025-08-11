@@ -1,7 +1,7 @@
 "use client";
 
 // Welcome to your The ZenZ Ai App!
-// This version adds data visualization to the weekly report.
+// This version adds detailed nutrient display to the meal logging page.
 
 import React, { useState, useEffect, useRef } from 'react';
 // Import the charting library
@@ -345,6 +345,9 @@ const ProfilePage = ({ onNavigate, user, userData, refreshData }: { onNavigate: 
 const LogMealPage = ({ onNavigate, user }: { onNavigate: (page: string) => void, user: any }) => {
     const [description, setDescription] = useState('');
     const [calories, setCalories] = useState('');
+    const [protein, setProtein] = useState('');
+    const [carbs, setCarbs] = useState('');
+    const [fats, setFats] = useState('');
     const [manualSaveLoading, setManualSaveLoading] = useState(false);
     const [aiLoading, setAiLoading] = useState(false);
     const [error, setError] = useState('');
@@ -358,6 +361,9 @@ const LogMealPage = ({ onNavigate, user }: { onNavigate: (page: string) => void,
             await addDoc(mealsCollectionRef, {
                 description,
                 calories: Number(calories),
+                protein: Number(protein),
+                carbs: Number(carbs),
+                fats: Number(fats),
                 loggedAt: serverTimestamp()
             });
             onNavigate('dashboard');
@@ -400,6 +406,9 @@ const LogMealPage = ({ onNavigate, user }: { onNavigate: (page: string) => void,
             } else {
                 setDescription(result.description || '');
                 setCalories(result.calories || '');
+                setProtein(result.protein || '');
+                setCarbs(result.carbs || '');
+                setFats(result.fats || '');
             }
 
         } catch (err) {
@@ -432,7 +441,12 @@ const LogMealPage = ({ onNavigate, user }: { onNavigate: (page: string) => void,
                     <div className="relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300 dark:border-gray-600" /></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">Or log manually</span></div></div>
                     <form className="space-y-4" onSubmit={handleManualSave}>
                         <Input id="mealDescription" label="Meal Description" placeholder="e.g., Grilled chicken, brown rice" value={description} onChange={e => setDescription(e.target.value)} />
-                        <Input id="calories" label="Calories (optional)" placeholder="e.g., 550" type="number" value={calories} onChange={e => setCalories(e.target.value)} required={false} />
+                        <Input id="calories" label="Calories" placeholder="e.g., 550" type="number" value={calories} onChange={e => setCalories(e.target.value)} required={false} />
+                        <div className="grid grid-cols-3 gap-4">
+                            <Input id="protein" label="Protein (g)" type="number" value={protein} onChange={e => setProtein(e.target.value)} required={false} />
+                            <Input id="carbs" label="Carbs (g)" type="number" value={carbs} onChange={e => setCarbs(e.target.value)} required={false} />
+                            <Input id="fats" label="Fats (g)" type="number" value={fats} onChange={e => setFats(e.target.value)} required={false} />
+                        </div>
                         <Button type="submit" variant="secondary" disabled={manualSaveLoading}>{manualSaveLoading ? "Saving..." : "Save Meal"}</Button>
                     </form>
                 </div>
